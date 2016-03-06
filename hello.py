@@ -12,16 +12,15 @@ def enter():
 @app.route("/main")
 def main():
     id = request.args.get('id')
-    result = render_template('main.html',data=id)
-    #result = render_template('main.html',data=getReview(0, id))
+    limit = request.args.get('limit')
+    result = render_template('main.html',data=getReview(int(limit), id))
     return result
 
-## ajax - Get Google Play Reviews By PageNum, Id
-@app.route("/review", methods=["POST"])
-def review():
-    pageNum = request.form.get('pageNum')
-    id = request.form.get('id')
-    return json.dumps(getReview(pageNum, id))
+@app.route("/test")
+def test():
+    limit = request.args.get('limit')
+    id = request.args.get('id')
+    return json.dumps(getReview(int(limit), id))
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True, host='0.0.0.0')

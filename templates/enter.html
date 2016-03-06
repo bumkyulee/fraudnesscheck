@@ -11,18 +11,15 @@
 			position:absolute; top:50%;
 			left:50%;
 			width:500px;
-			height:300px;
+			height:400px;
 			overflow:hidden;
-			margin-top:-150px;
+			margin-top:-200px;
 			margin-left:-250px;
-		}
-		#result_btn {
-			margin-top: 30px;
 		}
 	</style>
 	<script>
 		function result_btn_click(){
-			location.href = '/main?id=' + $('#appid').val();
+			location.href = '/main?id=' + $('#appid').val() + '&limit=' + $('#pagelimit').val();
 		}
 	</script>
 </head>
@@ -35,7 +32,15 @@
 			<div class="form-group">
 				<label class="col-lg-3 control-label">App_Id</label>
 				<div class="col-lg-9">
-					<input type="text" class="form-control" id="appid" placeholder="Put Your App Id">
+					<input type="text" class="form-control" id="appid" placeholder="App Id">
+					<p class="text-muted">example: com.sampleapp</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-3 control-label">Limit</label>
+				<div class="col-lg-9">
+					<input type="text" class="form-control" id="pagelimit" placeholder="How many reviews you want to check?">
+					<p class="text-muted">only natural numbers. bigger takes longer</p>
 				</div>
 			</div>
 		</fieldset>
