@@ -1,7 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head></head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<title>FraudChecker</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<style>
+		#center {
+			position:absolute; top:50%;
+			left:50%;
+			width:500px;
+			height:300px;
+			overflow:hidden;
+			margin-top:-150px;
+			margin-left:-250px;
+		}
+		#result_btn {
+			margin-top: 30px;
+		}
+	</style>
+	<script>
+		function result_btn_click(){
+			location.href = '/main?id=' + $('#appid').val();
+		}
+	</script>
+</head>
 <body>
-this is enter
+<div id="center">
+	<form class="form-horizontal">
+		<fieldset>
+			<h3><p class="text-info" align="center"><strong>FraudCheck - Google Play Reviews</strong></p></h3>
+			<br/>
+			<div class="form-group">
+				<label class="col-lg-3 control-label">App_Id</label>
+				<div class="col-lg-9">
+					<input type="text" class="form-control" id="appid" placeholder="Put Your App Id">
+				</div>
+			</div>
+		</fieldset>
+	</form>
+	<button onclick="result_btn_click()" id="result_btn" class="col-lg-9  col-lg-offset-2 btn btn-primary">Show Results</button>
+</div>
 </body>
 </html>
