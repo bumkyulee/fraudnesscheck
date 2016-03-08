@@ -146,7 +146,7 @@ def checkReward(body):
     # 2 - has email?
     result = result or bool(re.search(r"(\w+[\w\.]*)@(\w+[\w\.]*)\.([A-Za-z]+)", body))
     # 3 - has website? has id?
-    result = result or bool(re.match(r'([a-zA-Z]|[0-9]|[$-_@.&+])+', body))
+    result = result or bool(re.match(r'([a-zA-Z]|[0-9]|[$-_@.&+]){5}', body))
     return result
 
 ## FraudCheck - With Rating
