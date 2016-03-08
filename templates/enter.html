@@ -19,7 +19,7 @@
 	</style>
 	<script>
 		function result_btn_click(){
-			location.href = '/main?id=' + $('#appid').val() + '&limit=' + $('#pagelimit').val();
+			location.href = '/main?id=' + $('#appid').val();
 		}
 	</script>
 </head>
@@ -32,15 +32,13 @@
 			<div class="form-group">
 				<label class="col-lg-3 control-label">App_Id</label>
 				<div class="col-lg-9">
-					<input type="text" class="form-control" id="appid" placeholder="App Id">
+					<select class="form-control" id="appid">
+						<option value='all'>show all</option>
+						{% for row in data: %}
+							<option value='{{ row["appid"] }}'>{{ row['apptitle'] }}</option>
+						{% endfor %}
+					</select>
 					<p class="text-muted">example: com.sampleapp</p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-lg-3 control-label">Limit</label>
-				<div class="col-lg-9">
-					<input type="text" class="form-control" id="pagelimit" placeholder="How many reviews you want to check?">
-					<p class="text-muted">only natural numbers. bigger takes longer</p>
 				</div>
 			</div>
 		</fieldset>
