@@ -10,10 +10,19 @@
 		body {
 			font-size:12px;
 		}
+        .High{
+            color: red;
+        }
+        .Medium{
+            color: orange;
+        }
+        .Low{
+            color: burlywood;
+        }
     </style>
 </head>
 <body style="margin: 2px auto;">
-<p><h4>Total: {{ data.count() }} / AppId: {{ id }} / Suspicious: High - Middle - Low</h4></p>
+<p><h4>Total: {{ data.count() }} / AppId: {{ id }} / Suspicious: High - Medium - Low</h4></p>
 <table class="table table-striped table-hover ">
   <thead>
     <tr>
@@ -38,9 +47,9 @@
         <td>{{row['rating']}}</td>
         <td>{{row['body']}}</td>
         <td>{{', '.join(row['wordset'])}}</td>
-        <td>{{row['shortness']}}</td>
-        <td>{{row['exaggeration']}}</td>
-        <td>{{row['reward']}}</td>
+        <td class="{{row['shortness']}}">{{row['shortness']}}</td>
+        <td class="{{row['exaggeration']}}">{{row['exaggeration']}}</td>
+        <td class="{{row['reward']}}">{{row['reward']}}</td>
         {% if row['user'] != '': %}
         <td><a target="_blank" href="https://play.google.com/store/people/details?id={{row['user']}}">CHECK</a></td>
         {% else: %}

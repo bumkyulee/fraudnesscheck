@@ -154,7 +154,7 @@ def checkWithRating(result,rating):
     if rating in [1,5] and result:
         return 'High'
     elif rating in [2,4] and result:
-        return 'Middle'
+        return 'Medium'
     elif rating in [3] and result:
         return 'Low'
     else:
