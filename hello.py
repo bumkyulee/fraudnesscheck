@@ -34,13 +34,17 @@ def enter():
 @app.route("/main")
 def main():
     id = request.args.get('id')
+    '''
     cached = app.cache.get('main_'+id)
     if cached:
         print 'cached!'
         return cached
+    '''
     result = render_template('main.html',data=loadReview(id),id=id)
+    '''
     app.cache.set('main_'+id, result)
     print 'cache saved!'
+    '''
     return result
 
 ## test - tokenizer

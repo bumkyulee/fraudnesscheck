@@ -208,5 +208,3 @@ def genData(endRank,reviewNum,beginRank = 0):
         deleteReview(id)
         saveReview(reviewNum,id,title)
         setReviewData(id)
-
-genData(50,200)
