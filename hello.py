@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from pymongo import MongoClient
+from flask.ext.cache import Cache
 
 #Korean Analyzer
 from konlpy.tag import Twitter
@@ -7,6 +8,13 @@ import json
 from bson import json_util
 
 app = Flask(__name__)
+app.config['CACHE_TYPE'] = 'simple'
+app.cache = Cache(app, config={
+         'CACHE_TYPE': 'filesystem',
+         'CACHE_DIR': 'cache-dir',
+         'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
+         'CACHE_THRESHOLD': 922337203685477580
+     })
 
 @app.route("/")
 def enter():
@@ -26,7 +34,13 @@ def enter():
 @app.route("/main")
 def main():
     id = request.args.get('id')
+    cached = app.cache.get('main_'+id)
+    if cached:
+        print 'cached!'
+        return cached
     result = render_template('main.html',data=loadReview(id),id=id)
+    app.cache.set('main_'+id, result)
+    print 'cache saved!'
     return result
 
 ## test - tokenizer
@@ -35,12 +49,11 @@ def test1():
     id = request.args.get('id')
     return json.dumps(list(loadReview(id)), default=json_util.default)
 
-## test - tokenizer
-@app.route("/test2")
+## Clear All Cache
+@app.route("/clearcache")
 def test2():
-    text = request.args.get('text')
-    twitter = Twitter()
-    return json.dumps(twitter.pos(text, norm=True, stem=True))
+    app.cache.clear()
+    return 'Cleared'
 
 ## function - Load Review from MongoDB
 def loadReview(id):
@@ -48,7 +61,7 @@ def loadReview(id):
     db = client.reviews
     collection = db.app
     if id == 'all':
-        return collection.find({}).sort('no', 1).sort('appid',1)
+        return collection.find({}).sort('no', 1).sort('apptitle',1)
     else:
         return collection.find({"appid":id}).sort('no', 1)
 

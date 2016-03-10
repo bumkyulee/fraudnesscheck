@@ -17,7 +17,7 @@ def deleteReview(id):
     print 'Deleted: ' + id
 
 ## Get Google Reviews By Page
-def saveReview(limit, id):
+def saveReview(limit, id, title):
     #appInfo
     try:
         appInfoResult = getAppInfo(id)
@@ -47,23 +47,26 @@ def saveReview(limit, id):
             soup = BeautifulSoup(data[0][2])
         except:
             break
-        for review in soup.findAll('div',attrs={'class':'single-review'}):
+        reviews = soup.findAll('div',attrs={'class':'single-review'})
+        if len(reviews) == 0:
+            break
+        for review in reviews:
             result = dict()
             author = review.find('span',attrs={'class':'author-name'}).text
             date = review.find('span',attrs={'class':'review-date'}).text.encode('utf-8').replace('년','.').replace('월','.').replace('일','').decode('utf-8')
-            title = review.find('span',attrs={'class':'review-title'}).text
-            body = title + ' ' + review.find('div',attrs={'class':'review-body'}).text[len(title):-5]
+            body_title = review.find('span',attrs={'class':'review-title'}).text
+            body_content = body_title + ' ' + review.find('div',attrs={'class':'review-body'}).text[len(body_title):-5]
             rating = int(review.find('div',attrs={'class':'current-rating'})['style'].split(':')[1].strip()[:-2])/20
             user = review.find('span',attrs={'class':'author-name'}).find('a')
             user = user['href'].split('id=')[1] if user is not None else ''
-            result['apptitle'] = appInfoResult['title']
+            result['apptitle'] = title
             result['appgenre'] = appInfoResult['genre']
             result['appid'] = id
             result['no'] = reviewNo
             result['author'] = author
             result['date'] = date
             result['rating'] = rating
-            result['body'] = body
+            result['body'] = body_content
             result['user'] = user
             collection.insert(result)
             if reviewNo >= limit:
@@ -73,7 +76,7 @@ def saveReview(limit, id):
                 reviewNo+=1
         print 'page: ' + str(pageNum)
         pageNum+=1
-        time.sleep(10)
+        time.sleep(5)
 
     print 'saved: ' + str(collection.find({"appid":id}).count())
 
@@ -160,18 +163,50 @@ def checkWithRating(result,rating):
     else:
         return ''
 
-ids = [
-        'com.sampleapp',
-        'com.chbreeze.jikbang4a',
-        'com.ftt.lostkaos',
-        'com.skylinematrix.ggplay.mhsykr',
-        'com.wanmei.dfws',
-        'com.lkkr.ltjdgg',
-        'com.teslacoilsw.launcher.prime',
-        'com.tribe.hondoom',
-        'com.mojang.minecraftpe'
-    ]
-for id in ids:
-    #deleteReview(id)
-    #saveReview(200,id)
-    setReviewData(id)
+## AppId Collecting
+def saveTopAppIds(limit):
+    print 'Top App Id Crawling - Begin'
+    url = 'https://play.google.com/store/apps/collection/topselling_free'
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'user-agent': 'Mozilla/5.0'
+    }
+    whileFlag = True
+    count = 1
+    start = 0
+    num = 60
+    apps = list()
+    while whileFlag:
+        data = {'start':start,'num':num}
+        r = requests.post(url, data=data, headers=headers)
+        soup = BeautifulSoup(r.text)
+        for div in soup.findAll('div',attrs={'class':'card-content id-track-click id-track-impression'}):
+            title = div.find('a',attrs={'class':'title'}).text
+            id = div.find('span',attrs={'class':'preview-overlay-container'})['data-docid']
+            appinfos = dict()
+            appinfos['title'] = title
+            appinfos['id'] = id
+            apps.append(appinfos)
+            count+=1
+            if count > limit:
+                whileFlag = False
+                break
+        start += num
+        time.sleep(2)
+    print 'Top App Id Crawling - Done: ' + str(len(apps))
+    return apps
+
+# Generate Total Data
+def genData(endRank,reviewNum,beginRank = 0):
+    for rank, app in enumerate(saveTopAppIds(endRank),start=1):
+        print 'Processing Rank: '+str(rank) + ' / ' + str(endRank)
+        if beginRank > rank:
+            print '> Do nothing'
+            continue
+        id = app['id']
+        title = app['title']
+        deleteReview(id)
+        saveReview(reviewNum,id,title)
+        setReviewData(id)
+
+genData(50,200)

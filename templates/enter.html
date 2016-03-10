@@ -68,15 +68,15 @@
 			</h6>
 			<br/>
 			<div class="form-group">
-				<label class="col-lg-3 control-label">App_Id</label>
+				<label class="col-lg-3 control-label">{Rank}.Title</label>
 				<div class="col-lg-9">
 					<select class="form-control" id="appid">
-						<option value='all'>show all</option>
+						<option value='all'>show all - it will take time ( < 10s )</option>
 						{% for row in data: %}
 							<option value='{{ row["appid"] }}'>{{ row['apptitle'] }}</option>
 						{% endfor %}
 					</select>
-					<p class="text-muted">200 reviews of each 9 apps has already crawled</p>
+					<p class="text-muted">200 reviews of Top 1-100 app has been already crawled</p>
 				</div>
 			</div>
 		</fieldset>
