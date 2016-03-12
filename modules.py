@@ -3,7 +3,6 @@ import requests
 import json
 import time
 import re
-import mechanize
 from BeautifulSoup import BeautifulSoup
 from pymongo import MongoClient
 from konlpy.tag import Twitter
@@ -208,3 +207,11 @@ def genData(endRank,reviewNum,beginRank = 0):
         deleteReview(id)
         saveReview(reviewNum,id,title)
         setReviewData(id)
+
+# Test Data Set Crawling
+'''
+saveReview(200, 'com.kakao.style', 'Fraud_카카오스타일')
+saveReview(200, 'com.realbyteapps.moneya', 'Real_편한가게부')
+setReviewData('com.kakao.style')
+setReviewData('com.realbyteapps.moneya')
+'''

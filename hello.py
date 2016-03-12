@@ -53,6 +53,23 @@ def test1():
     id = request.args.get('id')
     return json.dumps(list(loadReview(id)), default=json_util.default)
 
+## test - tokenizer
+@app.route("/analysis")
+def analysis():
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client.reviews
+    collection = db.app_compare
+    data = list(collection.find({}).sort('no', 1).sort('apptitle',1))
+    twitter = Twitter()
+    for row in data:
+        row['nouns'] = list()
+        for token in twitter.pos(row['body'], norm=True, stem=True):
+            if token[1] in ['Noun']:
+                row['nouns'].append(token[0])
+        for popfield in ['_id','shortness','exaggeration','reward']:
+            del row[popfield]
+    return json.dumps(data, default=json_util.default)
+
 ## Clear All Cache
 @app.route("/clearcache")
 def test2():
