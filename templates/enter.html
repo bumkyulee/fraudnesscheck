@@ -45,8 +45,8 @@
 						<td>less than the average length of fraud reviews</td>
 					</tr>
 					<tr>
-						<td><i><b>Exaggeration</b></i></td>
-						<td>contains exaggerative words </td>
+						<td><i><b>non-Emotional</b></i></td>
+						<td>lack of emotional words </td>
 					</tr>
 					<tr>
 						<td><i><b>Reward</b></i></td>
@@ -71,7 +71,6 @@
 				<label class="col-lg-3 control-label">{Rank}.Title</label>
 				<div class="col-lg-9">
 					<select class="form-control" id="appid">
-						<option value='all'>show all - it will take time ( < 10s )</option>
 						{% for row in data: %}
 							<option value='{{ row["appid"] }}'>{{ row['apptitle'] }}</option>
 						{% endfor %}

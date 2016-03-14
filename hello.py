@@ -22,10 +22,16 @@ def enter():
     db = client.reviews
     collection = db.app
     data = list()
-    for appid in collection.distinct('appid'):
+    appids = collection.distinct('appid')
+    apptitles = collection.distinct('apptitle')
+    infos = list()
+    for idx, appid in enumerate(appids):
+        info = (appid,apptitles[idx],int(apptitles[idx].split('.')[0]))
+        infos.append(info)
+    for row in sorted(infos, key=lambda x: x[2]):
         appInfo = dict()
-        appInfo['appid'] = appid
-        appInfo['apptitle'] = collection.find_one({'appid':appid})['apptitle']
+        appInfo['appid'] = row[0]
+        appInfo['apptitle'] = row[1]
         data.append(appInfo)
     result = render_template('enter.html',data = data)
     return result
@@ -60,14 +66,6 @@ def analysis():
     db = client.reviews
     collection = db.app_compare
     data = list(collection.find({}).sort('no', 1).sort('apptitle',1))
-    twitter = Twitter()
-    for row in data:
-        row['nouns'] = list()
-        for token in twitter.pos(row['body'], norm=True, stem=True):
-            if token[1] in ['Noun']:
-                row['nouns'].append(token[0])
-        for popfield in ['_id','shortness','exaggeration','reward']:
-            del row[popfield]
     return json.dumps(data, default=json_util.default)
 
 ## Clear All Cache
@@ -81,10 +79,7 @@ def loadReview(id):
     client = MongoClient('mongodb://localhost:27017/')
     db = client.reviews
     collection = db.app
-    if id == 'all':
-        return collection.find({}).sort('no', 1).sort('apptitle',1)
-    else:
-        return collection.find({"appid":id}).sort('no', 1)
+    return collection.find({"appid":id}).sort('no', 1)
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True, host='0.0.0.0')

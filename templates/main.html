@@ -26,9 +26,7 @@
 </head>
 <body style="margin: 2px auto;">
 <p><h4>Total: {{ data.count() }} /
-    {% if id != 'all': %}
         Go to App Page: <a target="_blank" href="https://play.google.com/store/apps/details?id={{id}}">{{ id }}</a>
-    {% endif %}
 </h4></p>
 <table class="table table-striped table-hover ">
   <thead>
@@ -38,9 +36,9 @@
       <th>Author</th>
       <th>Rating</th>
       <th class="col-md-4">Contents</th>
-      <th class="col-md-2">Tokens</th>
+      <th class="col-md-2">Morphemes</th>
       <th>Shortness</th>
-      <th>Exaggeration</th>
+      <th>non-Emot'l</th>
       <th>Reward</th>
       <th>FraudUser</th>
     </tr>
@@ -55,7 +53,7 @@
         <td>{{row['body']}}</td>
         <td>{{', '.join(row['wordset'])}}</td>
         <td class="{{row['shortness']}}">{{row['shortness']}}</td>
-        <td class="{{row['exaggeration']}}">{{row['exaggeration']}}</td>
+        <td class="{{row['nonemotional']}}">{{row['nonemotional']}}</td>
         <td class="{{row['reward']}}">{{row['reward']}}</td>
         {% if row['user'] != '': %}
         <td><a target="_blank" onclick="ga('send', 'event','MainPage','UserCheck','{{row['user']}}');" href="https://play.google.com/store/people/details?id={{row['user']}}">CHECK</a></td>

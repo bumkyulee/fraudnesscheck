@@ -108,7 +108,7 @@ def setReviewData(id):
         collection.remove({'_id':row['_id']})
         row['wordset'] = getTokenizedWords(row['body'])
         row['shortness'] = checkWithRating(checkShortness(row['wordset']),row['rating'])
-        row['exaggeration'] = checkWithRating(checkExaggeration(row['wordset']),row['rating'])
+        row['non-emotional'] = checkWithRating(checkExaggeration(row['wordset']),row['rating'])
         row['reward'] = checkWithRating(checkReward(row['body']),row['rating'])
         collection.insert(row)
 
@@ -131,16 +131,17 @@ def checkShortness(tokens):
 
 ## FraudCheck2 - Exaggeration
 def checkExaggeration(tokens):
-    mots = [u'최고',u'좋다',u'짱',u'별루']
-    intersectLimit = 0
-    result = len(mots) - len(list(set(mots) - set(tokens))) > intersectLimit
+    exaggeration = [u'최고',u'좋다',u'짱',u'진짜',u'편하다',u'정말',u'추천',u'재밌다']
+    insultation = [u'씨발',u'존나',u'쓰레기',u'노잼',u'삭제',u'짜증',u'최악']
+    mots = set(exaggeration) | set(insultation)
+    result = len(list(set(tokens) & mots)) == 0
     return result
 
 ## FraudCheck3 - Reward
 def checkReward(body):
     # 1 - mots check
     result = False
-    mots = [u'쿠폰',u'이벤트',u'아이템',u'이모티콘',u'아이디',u'계정']
+    mots = [u'쿠폰',u'이벤트',u'아이템',u'이모티콘',u'아이디',u'계정',u'초코']
     for mot in mots:
         if mot in body:
             result = True
@@ -207,6 +208,17 @@ def genData(endRank,reviewNum,beginRank = 0):
         deleteReview(id)
         saveReview(reviewNum,id,title)
         setReviewData(id)
+
+# Analyze All
+def analyzeData():
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client.reviews
+    collection = db.app
+    data = collection.find({}).distinct('appid')
+    for id in data:
+        setReviewData(id)
+
+analyzeData()
 
 # Test Data Set Crawling
 '''
